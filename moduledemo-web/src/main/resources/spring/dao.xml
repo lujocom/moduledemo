@@ -31,5 +31,9 @@
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
 		<constructor-arg index="0" ref="sqlSessionFactory" />
 	</bean>
+	<!--基于接口的DAO-->
+	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<property name="basePackage" value="com.channelsoft.salepartner.disposedata.dao" />
+	</bean>
 	<context:component-scan base-package="com.channelsoft.study.module.dao" />
 </beans>

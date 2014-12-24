@@ -19,10 +19,9 @@
     </build>
 
     <dependencies>
-
         <dependency>
             <groupId>com.channelsoft.study.moduleDemo</groupId>
-            <artifactId>moduledemo-config</artifactId>
+            <artifactId>moduledemo-util</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
