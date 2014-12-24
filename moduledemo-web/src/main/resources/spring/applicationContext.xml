@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <!-- 开启注解配置 -->
+	<context:annotation-config />
+
+	<!-- Handler输入和输出的处理器 -->
+    <bean
+            class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <!-- 处理返回值为Json格式的数据 -->
+        <property name="customReturnValueHandlers">
+            <list>
+                <bean
+                        class="com.channelsoft.moduledemo.util.adapter.JsonAndViewMethodReturnValueHandler" />
+            </list>
+        </property>
+
+        <property name="messageConverters">
+            <list>
+                <!-- 把ByteArray加在Json前面 -->
+                <bean
+                        class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+                <bean id="jsonHttpMessageConverter"
+                      class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+                    <property name="supportedMediaTypes">
+                        <list>
+                            <value>text/plain;charset=UTF-8</value>
+                        </list>
+                    </property>
+                    <property name="objectMapper" ref="objectMapper"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    <!-- 前后台json数据传输配置（处理json数据转换），不配报406错误 -->
+	<bean id="mappingJacksonHttpMessageConverter"
+		class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+	</bean>
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+		<property name="messageConverters">
+			<util:list id="beanList">
+				<ref bean="mappingJacksonHttpMessageConverter" />
+			</util:list>
+		</property>
+	</bean>
+    <!-- 异常处理器 -->
+    <bean id="jsonExceptionResolver" class="com.channelsoft.moduledemo.util.json.JsonExceptionResolver">
+        <property name="order" value="0" />
+    </bean>
+    <!-- 配置view视图处理器 -->
+    <bean id="beanNameViewResolver"
+          class="org.springframework.web.servlet.view.BeanNameViewResolver">
+        <property name="order" value="0" />
+    </bean>
+    <bean id="jsonView" class="com.channelsoft.moduledemo.util.json.JsonpView">
+        <property name="encoding">
+            <value type="org.codehaus.jackson.JsonEncoding">UTF8</value>
+        </property>
+        <property name="contentType" value="application/json;charset=UTF-8" />
+        <property name="extractValueFromSingleKeyModel" value="true" />
+        <!-- 配置Json解析时，去除为 null 的字段 by EasonLian -->
+        <property name="objectMapper" ref="objectMapper" />
+    </bean>
+
+    <bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper">
+        <property name="serializationInclusion">
+            <value type="org.codehaus.jackson.map.annotate.JsonSerialize$Inclusion">
+                NON_NULL
+            </value>
+        </property>
+    </bean>
+</beans>

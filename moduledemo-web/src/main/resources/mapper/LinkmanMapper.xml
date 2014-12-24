@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="linkman">
+    
+    <select id="getAllLinkman" resultType="LinkmanPo" >
+		select 
+			lima_id as limaId,
+			lima_name as limaName,
+			lima_phone_num as limaPhoneNum,
+			lima_address as limaAddress,
+			lima_area as limaArea,
+			lima_modified_time as limaModifiedTime
+		from 
+			linkman
+    </select>
+
+    <select id="getLinkmanForList" parameterType="LinkmanPo" resultType="LinkmanPo">
+        select
+			lima_id as limaId,
+			lima_name as limaName,
+			lima_phone_num as limaPhoneNum,
+			lima_address as limaAddress,
+			lima_area as limaArea
+		from
+			linkman
+		<trim prefix="where" prefixOverrides="or">
+            <if test="limaId != null">
+                lima_id = #{limaId}
+            </if>
+            <if test="limaName != null">
+                lima_name like '%${limaName}%'
+            </if>
+            <if test="limaAddress != null">
+               or lima_address like '%${limaAddress}%'
+            </if>
+            <if test="limaArea != null">
+               or lima_area like '%${limaArea}%'
+            </if>
+		</trim>
+    </select>
+
+    <update id="updateLinkman" parameterType="LinkmanPo">
+    	UPDATE linkman
+    	<set>
+    		<if test="limaName != null">
+    			lima_name = #{limaName},
+    		</if>
+    		<if test="limaPhoneNum != null">
+    			lima_phone_num = #{limaPhoneNum},
+    		</if>
+    		<if test="limaAddress != null">
+    			lima_address = #{limaAddress},
+    		</if>
+    		<if test="limaArea != null">
+    			lima_area = #{limaArea}
+    		</if>
+    	</set>
+    	<where>
+    		lima_id = #{limaId}
+    	</where>
+    </update>
+    
+    <delete id="deleteLinkman" parameterType="integer">
+    	delete from linkman 
+    	<where>
+    		<if test="array.length > 0">
+    			lima_id in
+                <foreach collection="array" item="element" index="index" open="(" close=")" separator=",">
+                    #{element}
+                </foreach>
+    		</if>
+    	</where>
+    </delete>
+    
+    <insert id="addNewLinkman" parameterType="LinkmanPo">
+    	insert into linkman(
+    		lima_name, lima_phone_num, 
+    		lima_address, lima_area, lima_modified_time
+    	)
+    	value(
+    		#{limaName}, #{limaPhoneNum},#{limaAddress}, #{limaArea}, #{limaModifiedTime}
+    	)
+    
+    </insert>
+
+    <select id="findOneLinkmanByIdOrPhoneNum" parameterType="LinkmanPo" resultType="LinkmanPo">
+        select
+            lima_id as limaId,
+            lima_name as limaName,
+            lima_phone_num as limaPhoneNum,
+            lima_address as limaAddress,
+            lima_area as limaArea,
+            lima_modified_time as limaModifiedTime
+        from
+            linkman
+        <where>
+            <if test="limaId != null">
+                lima_id = #{limaId}
+            </if>
+            <if test="limaPhoneNum != null">
+                lima_phone_num = #{limaPhoneNum}
+            </if>
+        </where>
+    </select>
+    
+
+</mapper>

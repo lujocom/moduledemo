@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="firstPage">
+
+
+    <select id="getPageContent" resultType="FirstPagePo" parameterType="String">
+		select 
+			fipa_id as fipaId,
+			fipa_name as fipaName,
+			fipa_path as fipaPath,
+			fipa_time as fipaTime,
+			fipa_modified_time as fipaModifiedTime
+		from 
+			firstpage
+		<where>
+			<if test="_parameter != null">
+				fipa_name = #{_parameter}
+			</if>
+		</where>
+    </select>
+    
+    <delete id="deletePageContent" parameterType="int">
+    	delete from firstpage where fipa_id = #{firstPageContentId}
+    </delete>
+
+	<insert id="addPageContent" parameterType="FirstPagePo" keyProperty="fipaId">
+		insert into firstpage(
+			fipa_name, fipa_path, fipa_time
+		)
+		value(
+			#{fipaName}, #{fipaPath}, #{fipaTime}
+		)
+	</insert>
+
+    <select id="getFirstInfoById" parameterType="integer" resultType="FirstPagePo">
+        select
+            fipa_id as fipaId,
+            fipa_name as fipaName,
+            fipa_path as fipaPath,
+            fipa_time as fipaTime,
+            fipa_modified_time as fipaModifiedTime
+        from
+            firstpage
+        <where>
+            <if test="_parameter != null">
+                fipa_id = #{_parameter}
+            </if>
+        </where>
+    </select>
+
+
+
+	
+</mapper>

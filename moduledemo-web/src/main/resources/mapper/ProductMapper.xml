@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="product">
+
+	<select id="getAllProduct" resultType="ProductPo">
+		select
+			prod_id as prodId,
+			prod_name as prodName,
+			prod_abstract as prodAbstract,
+			prod_video_path as prodVideoPath,
+			prod_add_time as prodAddTime,
+			prod_modified_time as prodModifiedTime
+		from
+			product
+	</select>
+
+    <select id="getProductByCondition" parameterType="ProductPo" resultType="ProductPo">
+        select
+            prod_id as prodId,
+			prod_name as prodName,
+			prod_add_time as prodAddTime
+		from
+		    product
+		 <where>
+             <if test="prodName != null">
+                 prod_name like '%${prodName}%'
+             </if>
+		 </where>
+    </select>
+
+    <select id="getProductById" parameterType="integer" resultType="ProductPo">
+        select
+            prod_id as prodId,
+            prod_name as prodName,
+            prod_abstract as prodAbstract,
+            prod_video_path as prodVideoPath,
+            prod_add_time as prodAddTime
+        from
+            product
+        <where>
+             prod_id = #{_parameter}
+        </where>
+    </select>
+
+    <select id="getProductByProductName" parameterType="string" resultType="ProductPo">
+        select
+            prod_id as prodId,
+			prod_name as prodName,
+			prod_add_time as prodAddTime
+        from
+            product
+        where
+            prod_name = #{_parameter}
+    </select>
+
+	<insert id="addNewsProduct" parameterType="ProductPo">
+		insert into product(
+			prod_name, prod_abstract,
+			prod_video_path,prod_add_time
+		)value(
+			#{prodName}, #{prodAbstract},
+			#{prodVideoPath}, #{prodAddTime}
+		)
+	</insert>
+
+	<update id="updateProduct" parameterType="ProductPo">
+		update
+		  product
+		<trim prefix="set" suffixOverrides=",">
+            <if test="prodName != null">
+                prod_name = #{prodName},
+            </if>
+            <if test="prodAbstract != null">
+                prod_abstract = #{prodAbstract},
+            </if>
+            <if test="prodVideoPath != null">
+                prod_video_path = #{prodVideoPath}
+            </if>
+        </trim>
+		where
+			prod_id = #{prodId}	
+	</update>
+
+	<delete id="deleteProduct" parameterType="integer">
+		delete from
+		    product
+		<where>
+            <if test="array.length > 0">
+                prod_id in
+                <foreach collection="array" index="index" item="element" open="(" close=")" separator=",">
+                    #{element}
+                </foreach>
+
+            </if>
+		</where>
+	</delete>
+
+</mapper>

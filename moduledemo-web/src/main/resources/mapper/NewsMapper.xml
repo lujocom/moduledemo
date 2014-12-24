@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="news">
+
+    <select id="getAllNews" parameterType="NewsPo" resultType="newsPo">
+   		select
+   			news_id as newsId,
+   			news_title as newsTitle,
+   			news_content as newsContent,
+   			news_img_path as newsImgPath,
+   			news_add_time as newsAddTime,
+   			news_level as newsLevel
+   		from
+   			news
+        <where>
+            <if test="newsId != null">
+                news_id = #{newsId}
+            </if>
+            <if test="newsTitle != null">
+                news_title = #{newsTitle}
+            </if>
+        </where>
+    </select>
+
+    <select id="getOneNewsByTitle" parameterType="string" resultType="newsPo">
+        select
+            news_id as newsId,
+            news_title as newsTitle
+        from
+            news
+        <where>
+           news_title = #{_parameter}
+        </where>
+    </select>
+
+    <select id="getNewsByCondition" parameterType="NewsPo" resultType="newsPo">
+        select
+            news_id as newsId,
+   			news_title as newsTitle,
+   			news_add_time as newsAddTime
+   		from
+   		    news
+   		<trim prefix="where" prefixOverrides="and">
+            <if test="newsId != null">
+                news_id = #{newsId}
+            </if>
+            <if test="newsTitle != null">
+                and news_title like '%${newsTitle}%'
+            </if>
+            <if test="newsContent != null">
+                or news_content like '%${newsContent}%'
+            </if>
+   		</trim>
+    </select>
+
+   	<insert id="addNews" parameterType="NewsPo">
+		insert into news(
+			news_title, news_content, 
+			news_img_path, news_add_time, news_level)
+		value(
+			#{newsTitle},#{newsContent},
+			#{newsImgPath},#{newsAddTime},#{newsLevel}
+		)
+	</insert>
+	
+	<delete id="deleteNews" parameterType="integer">
+		delete from news 
+		<where>
+			<if test="array.length > 0">
+				news_id in
+                <foreach collection="array" index="index" item="element" open="(" close=")" separator=",">
+                    #{element}
+                </foreach>
+			</if>
+		</where>
+	</delete>
+
+	<update id="updateNews" parameterType="NewsPo">
+		update news 
+		<set>
+			news_title = #{newsTitle},
+			news_content = #{newsContent}
+		</set>
+		where news_id = #{newsId}
+	</update>
+
+
+</mapper>
