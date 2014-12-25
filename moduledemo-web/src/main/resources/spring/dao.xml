@@ -33,7 +33,7 @@
 	</bean>
 	<!--基于接口的DAO-->
 	<bean id="mapperScannerConfigurer" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.channelsoft.study.module.dao" />
+		<property name="basePackage" value="com.channelsoft.study.module.mapper" />
 	</bean>
-	<context:component-scan base-package="com.channelsoft.study.module.dao" />
+	<context:component-scan base-package="com.channelsoft.study.module.mapper" />
 </beans>
